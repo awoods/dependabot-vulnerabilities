@@ -1,6 +1,8 @@
 import requests
 from dotenv import load_dotenv
 import os
+import urllib.parse
+import json
 
 # Load .env file
 load_dotenv()
@@ -21,16 +23,43 @@ def get_repositories(org):
         url = response.links.get('next', {}).get('url')  # Pagination
     return repos
 
+
 def get_vulnerabilities(repo):
-    """Fetch critical and high vulnerabilities for a given repository."""
+    """Fetch critical and high vulnerabilities for a given repository with pagination."""
     url = f'https://api.github.com/repos/{ORGANIZATION}/{repo}/dependabot/alerts'
-    response = requests.get(url, headers=HEADERS)
-    vulnerabilities = response.json()
-    return [v for v in vulnerabilities if 'security_advisory' in v and v['security_advisory'].get('severity') in ['critical', 'high']]
+    vulnerabilities = []
+
+    while url:
+        response = requests.get(url, headers=HEADERS)
+        # Check if the response is successful (2xx status code)
+        if response.status_code >= 200 and response.status_code < 300:
+            # Add the current page's results to the vulnerabilities list
+            vulnerabilities.extend(response.json())
+
+            # Parse the "Link" header to find the next page URL, if it exists
+            links = response.headers.get('Link', '')
+            next_url = None
+            if links:
+                for link in links.split(','):
+                    if 'rel="next"' in link:
+                        next_url = link[link.find('<') + 1:link.find('>')]
+                        break
+
+            # Set the URL to the next page or None if there's no next page
+            url = next_url
+        else:
+            return []
+
+    # Filter vulnerabilities
+    return [
+        v for v in vulnerabilities
+        if 'security_advisory' in v
+        and v['security_advisory'].get('severity') in ['critical', 'high']
+        and v['state'] == 'open'
+    ]
+
 
 def get_base_url(url):
-    import urllib.parse
-
     # Parse the URL into components
     parsed_url = urllib.parse.urlparse(url)
 
