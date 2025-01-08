@@ -10,7 +10,14 @@ source myenv/bin/activate
 pip install -r requirements.txt
 ```
 
-Credentials, populate with Github PAT (`Read access to Dependabot alerts, administration, and metadata`) and Github organization name.
+### Credentials
+Populate with:
+- Github PAT
+   - github.com, fine-grained (`Read access to Dependabot alerts, administration, and metadata`)
+   - Enterprise github, classic (`repo:all, admin:read:org, admin:read:enterprise`)
+- Github organization name
+- API URL for repos: provided
+- API URL for dependabot alerts: provided
 ```bash
 cp env-example .env
 vi .env

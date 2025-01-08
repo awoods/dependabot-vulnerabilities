@@ -1,2 +1,11 @@
+# github.com
+#GITHUB_TOKEN=
+#ORGANIZATION=
+#URL_REPOS=https://api.github.com/orgs/{}/repos?type=all
+#URL_ALERTS=https://api.github.com/repos/{}/{}/dependabot/alerts
+
+# HUIT github
 GITHUB_TOKEN=
 ORGANIZATION=
+URL_REPOS=https://github.huit.harvard.edu/api/v3/orgs/{}/repos?type=all
+URL_ALERTS=https://github.huit.harvard.edu/api/v3/repos/{}/{}/dependabot/alerts

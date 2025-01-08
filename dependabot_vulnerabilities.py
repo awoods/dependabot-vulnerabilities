@@ -10,12 +10,14 @@ load_dotenv()
 # Constants
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 ORGANIZATION = os.getenv('ORGANIZATION')
+URL_REPOS = os.getenv('URL_REPOS')
+URL_ALERTS = os.getenv('URL_ALERTS')
 HEADERS = {'Authorization': f'token {GITHUB_TOKEN}'}
 
 def get_repositories(org):
     """Fetch all repositories in the given organization."""
     repos = []
-    url = f'https://api.github.com/orgs/{org}/repos?type=all'
+    url = URL_REPOS.format(org)
     while url:
         response = requests.get(url, headers=HEADERS)
         data = response.json()
@@ -26,7 +28,7 @@ def get_repositories(org):
 
 def get_vulnerabilities(repo):
     """Fetch critical and high vulnerabilities for a given repository with pagination."""
-    url = f'https://api.github.com/repos/{ORGANIZATION}/{repo}/dependabot/alerts'
+    url = URL_ALERTS.format(ORGANIZATION, repo)
     vulnerabilities = []
 
     while url:
